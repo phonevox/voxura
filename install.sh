@@ -247,13 +247,13 @@ colorir () {
 }
 
 arte () {
-	local asciiart="$1"
-	local IFS=$'\n'
-	for line in $asciiart; do
-		echo "$line"
-	done
-	echo ""
-	echo ""
+        local asciiart="$1"
+        local IFS=$'\n'
+        for line in $asciiart; do
+                echo "$line"
+        done
+        echo ""
+        echo ""
 }
 
 # // -------------- Declaração das funções principais do installer.
@@ -775,6 +775,34 @@ executar_alteracoes_servidor () {
   
 }
 
+# Função para criar o banco de dados e tabela
+criar_banco_e_tabela() {
+  DB_HOST="localhost"
+  DB_USER="root"
+  DB_PASS="${args[SQL_PASSWORD]}" # Substitua por "sua_senha" para testar
+  DB_NAME="avaliacao"
+
+  SQL="
+CREATE DATABASE IF NOT EXISTS $DB_NAME;
+USE $DB_NAME;
+CREATE TABLE IF NOT EXISTS pesquisa (
+    info1 VARCHAR(100) DEFAULT NULL,
+    info2 VARCHAR(100) DEFAULT NULL,
+    info3 VARCHAR(100) DEFAULT NULL,
+    info4 VARCHAR(100) DEFAULT NULL,
+    info5 VARCHAR(100) DEFAULT NULL,
+    info6 VARCHAR(100) DEFAULT NULL,
+    datetime DATETIME DEFAULT NULL
+);
+"
+
+  echo "Criando banco de dados e tabela..."
+  mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "$SQL" || {
+    echo "Erro ao executar o comando SQL." >&2
+    exit 1
+  }
+}
+
 finalizar () {
   log "# $(colorir "verde" "Instalação finalizada")!"
   echo ""
@@ -786,36 +814,6 @@ finalizar () {
 
 }
 
-#!/bin/bash
-
-# Função para criar o banco de dados e tabela
-criar_banco_e_tabela() {
-  # Configurações do banco
-  DB_HOST="localhost"
-  DB_USER="root"
-  DB_PASS="${args[SQL_PASSWORD]}"
-  DB_NAME="avaliacao"
-
-  # Comandos SQL para criar o banco e a tabela
-  SQL="
-CREATE DATABASE IF NOT EXISTS $DB_NAME;
-
-USE $DB_NAME;
-
-CREATE TABLE IF NOT EXISTS pesquisa (
-    info1 VARCHAR(100) DEFAULT NULL,
-    info2 VARCHAR(100) DEFAULT NULL,
-    info3 VARCHAR(100) DEFAULT NULL,
-    info4 VARCHAR(100) DEFAULT NULL,
-    info5 VARCHAR(100) DEFAULT NULL,
-    info6 VARCHAR(100) DEFAULT NULL,
-    datetime DATETIME DEFAULT NULL
-);
-  "
-  # Executando comandos no MySQL
-  echo "Criando banco de dados e tabela..."
-  mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "$SQL"
-
 main () {
   # Código a ser executado:
 
@@ -825,10 +823,8 @@ main () {
   confirmar_verificacoes
   executar_alteracoes_servidor
   criar_banco_e_tabela
-
+  
   finalizar
 }
 
 main
-
-
