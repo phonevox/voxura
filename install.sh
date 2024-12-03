@@ -710,7 +710,7 @@ executar_alteracoes_servidor () {
     log "- $(colorir "ciano_claro" "Criando, caso não exista, a tabela 'pesquisa'")."
 
     # 10/10/23 09:15 | Note: alguma hora, fazer uma checagem se isso aqui deu certo, visto que é essencial.
-    mysql -uroot -p${args[SQL_PASSWORD]} call_center -e "CREATE TABLE IF NOT EXISTS pesquisa (info1 varchar(100), info2 varchar(100), info3 varchar(100), info4 varchar(100), info5 varchar(100), info6 varchar(100), datetime datetime)";
+    mysql -uroot -p${args[SQL_PASSWORD]} avaliacao -e "CREATE TABLE IF NOT EXISTS pesquisa (info1 varchar(100), info2 varchar(100), info3 varchar(100), info4 varchar(100), info5 varchar(100), info6 varchar(100), datetime datetime)";
   }
 
   alter_register_module () {
@@ -786,6 +786,36 @@ finalizar () {
 
 }
 
+#!/bin/bash
+
+# Função para criar o banco de dados e tabela
+criar_banco_e_tabela() {
+  # Configurações do banco
+  DB_HOST="localhost"
+  DB_USER="root"
+  DB_PASS="${args[SQL_PASSWORD]}"
+  DB_NAME="avaliacao"
+
+  # Comandos SQL para criar o banco e a tabela
+  SQL="
+CREATE DATABASE IF NOT EXISTS $DB_NAME;
+
+USE $DB_NAME;
+
+CREATE TABLE IF NOT EXISTS pesquisa (
+    info1 VARCHAR(100) DEFAULT NULL,
+    info2 VARCHAR(100) DEFAULT NULL,
+    info3 VARCHAR(100) DEFAULT NULL,
+    info4 VARCHAR(100) DEFAULT NULL,
+    info5 VARCHAR(100) DEFAULT NULL,
+    info6 VARCHAR(100) DEFAULT NULL,
+    datetime DATETIME DEFAULT NULL
+);
+  "
+  # Executando comandos no MySQL
+  echo "Criando banco de dados e tabela..."
+  mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "$SQL"
+
 main () {
   # Código a ser executado:
 
@@ -794,6 +824,7 @@ main () {
   realizar_verificacoes_sistema
   confirmar_verificacoes
   executar_alteracoes_servidor
+  criar_banco_e_tabela
 
   finalizar
 }
