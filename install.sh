@@ -767,6 +767,7 @@ executar_alteracoes_servidor () {
   alter_extensions
   alter_include
   alter_voxura
+  criar_banco_e_tabela
   alter_database
   alter_register_module
   verify_phpini
@@ -822,7 +823,6 @@ main () {
   realizar_verificacoes_sistema
   confirmar_verificacoes
   executar_alteracoes_servidor
-  criar_banco_e_tabela
   
   finalizar
 }
