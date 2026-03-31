@@ -1,4 +1,21 @@
+<?php
+function isAuthenticated() {
+return isset($_SESSION['issabel_user']) && isset($_SESSION['issabel_pass']);
+}
 
+function redirectToLogin() {
+header("Location: ../index.php");
+exit;
+}
+
+session_name("issabelSession");
+session_start();
+
+if (!isAuthenticated()) {
+redirectToLogin();
+}
+
+?>
 
 <html>
     <head>
